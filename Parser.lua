@@ -1,15 +1,14 @@
 local module = {}
 
-local sin, cos, tan = math.sin, math.cos, math.tan
-local pow = math.pow
-local log10 = math.log10
-local toNumber = tonumber
-local splitStr = string.split
-local try = pcall
+type operandData = {
+	op: string,
+	paramCount: number,
+	func: () -> (number)
+}
 
-local params = {}
+local params: { number } = {}
 
-local operandOrder = {
+local operandOrder: { operandData } = {
 	{
 		op = "+",
 		paramCount = 2,
@@ -42,35 +41,35 @@ local operandOrder = {
 		op = "^",
 		paramCount = 2,
 		func = function()
-			return pow(params[1], params[2])
+			return math.pow(params[1], params[2])
 		end,
 	},
 	{
 		op = "sin",
 		paramCount = 1,
 		func = function()
-			return sin(params[1])
+			return math.sin(params[1])
 		end,
 	},
 	{
 		op = "log",
 		paramCount = 1,
 		func = function()
-			return log10(params[1])
+			return math.log10(params[1])
 		end,
 	},
 	{
 		op = "cos",
 		paramCount = 1,
 		func = function()
-			return cos(params[1])
+			return math.cos(params[1])
 		end,		
 	},
 	{
 		op = "tan",
 		paramCount = 1,
 		func = function()
-			return tan(params[1])
+			return math.tan(params[1])
 		end,
 	},
 	{
@@ -95,10 +94,10 @@ local operandOrder = {
 
 module.success = false
 
-module.load = function(symbols: { number }, inputNumbers: { number }, input: string): number
+function module.load(symbols: { number }, inputNumbers: { number }, input: string): number
 	module.success = false
 	
-	local stringTokens = splitStr(input, " ")
+	local stringTokens = string.split(input, " ")
 	local inputNumberCount = 0
 	local symbolCount = 0
 	local resultStackCount = 0
@@ -108,7 +107,7 @@ module.load = function(symbols: { number }, inputNumbers: { number }, input: str
 			continue
 		end 
 		
-		local success, num = try(toNumber, stringTokens[i])
+		local success, num = pcall(tonumber, stringTokens[i])
 		
 		if not success then
 			return 0
@@ -162,7 +161,7 @@ module.load = function(symbols: { number }, inputNumbers: { number }, input: str
 	return symbolCount
 end
 
-module.calculate = function(symbols: { number }, symbolCount: number, inputNumbers: { number }, x: number, y: number): number	
+function module.calculate(symbols: { number }, symbolCount: number, inputNumbers: { number }, x: number, y: number): number	
 	local resultStack = {}
 	local resultStackSize = 0
 	local symbolIndex = 1

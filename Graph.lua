@@ -1,6 +1,5 @@
 local module = {}
-
-local calculate = require(game:GetService("ReplicatedStorage").Parser).calculate
+local parser = require(script.Parent.Parser)
 
 module.threshold = 0
 
@@ -11,9 +10,9 @@ module.rightSymbols = {}
 module.rightSymbolsCount = 0
 module.rightInputNumbers = {}
 
-module.isInEquation = function(x: number, y: number): boolean	
-	local left = calculate(module.leftSymbols, module.leftSymbolsCount, module.leftInputNumbers, x, y)
-	local right = calculate(module.rightSymbols, module.rightSymbolsCount, module.rightInputNumbers, x, y)
+function module.isInEquation(x: number, y: number): boolean	
+	local left = parser.calculate(module.leftSymbols, module.leftSymbolsCount, module.leftInputNumbers, x, y)
+	local right = parser.calculate(module.rightSymbols, module.rightSymbolsCount, module.rightInputNumbers, x, y)
 	local result = left - right
 	
 	if result < 0 then
@@ -26,6 +25,5 @@ module.isInEquation = function(x: number, y: number): boolean
 	
 	return false
 end
-
 
 return module
